@@ -31,34 +31,49 @@ public class TouchControls : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     }
 
     public void OnDrag(PointerEventData e)
+{
+    float dx = e.position.x - lastStepX;
+
+    while (dx >= stepDistance)
     {
-        float dx = e.position.x - lastStepX;
+        if (player != null)
+            player.MoveRight();
 
-        while (dx >= stepDistance)
-        {
-            if (player != null)
-    player.MoveRight();
-            lastStepX += stepDistance;
-            dx = e.position.x - lastStepX;
-            moved = true;
-        }
-        while (dx <= -stepDistance)
-        {
-            if (player != null)
-    player.MoveLeft();
-            lastStepX -= stepDistance;
-            dx = e.position.x - lastStepX;
-            moved = true;
-        }
-
-        if (!dropping && startPos.y - e.position.y >= dropDistance)
-        {
-            dropping = true;
-            moved = true;
-            if (player != null)
-    player.HardDrop();
-        }
+        lastStepX += stepDistance;
+        dx = e.position.x - lastStepX;
+        moved = true;
     }
+
+    while (dx <= -stepDistance)
+    {
+        if (player != null)
+            player.MoveLeft();
+
+        lastStepX -= stepDistance;
+        dx = e.position.x - lastStepX;
+        moved = true;
+    }
+
+    float downwardDistance = startPos.y - e.position.y;
+
+    if (!dropping && downwardDistance >= dropDistance)
+{
+    dropping = true;
+    moved = true;
+
+    Debug.Log("DOWNWARD SWIPE DETECTED");
+
+    if (player != null)
+    {
+        Debug.Log("PLAYER FOUND");
+        player.HardDrop();
+    }
+    else
+    {
+        Debug.Log("PLAYER IS NULL");
+    }
+}
+}
 
     public void OnPointerUp(PointerEventData e)
 {
