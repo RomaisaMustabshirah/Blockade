@@ -26,6 +26,17 @@ public class TouchControls : MonoBehaviour, IPointerDownHandler, IDragHandler, I
     bool dropping;
     bool moved;
 
+    // Always returns the piece currently in play (pieces are destroyed and respawned)
+    PlayerController CurrentPlayer
+    {
+        get
+        {
+            if (player == null)
+                player = FindFirstObjectByType<PlayerController>();
+            return player;
+        }
+    }
+
     public void OnPointerDown(PointerEventData e)
     {
         startPos = e.position;
@@ -33,7 +44,7 @@ public class TouchControls : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         dropping = false;
         moved = false;
 
-        if (logEvents) Debug.Log("TouchControls: pointer down at " + e.position);
+        if (logEvents) Debug.Log("TouchControls: pointer down at " + e.position + ", player found: " + (CurrentPlayer != null));
     }
 
     public void OnDrag(PointerEventData e)
@@ -43,7 +54,8 @@ public class TouchControls : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
         while (dx >= stepDistance)
         {
-            if (player != null) player.MoveRight();
+            PlayerController p = CurrentPlayer;
+            if (p != null) p.MoveRight();
             lastStepX += stepDistance;
             dx = e.position.x - lastStepX;
             moved = true;
@@ -51,7 +63,8 @@ public class TouchControls : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
         while (dx <= -stepDistance)
         {
-            if (player != null) player.MoveLeft();
+            PlayerController p = CurrentPlayer;
+            if (p != null) p.MoveLeft();
             lastStepX -= stepDistance;
             dx = e.position.x - lastStepX;
             moved = true;
@@ -67,21 +80,14 @@ public class TouchControls : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
             if (logEvents) Debug.Log("TouchControls: HARD DROP triggered");
 
-            if (player != null) player.HardDrop();
+            PlayerController p = CurrentPlayer;
+            if (p != null) p.HardDrop();
         }
     }
 
     public void OnPointerUp(PointerEventData e)
     {
-        if (logEvents) Debug.Log("TouchControls: pointer up, dropping=" + dropping + ", moved=" + moved);
-
-        if (dropping)
-        {
-            // Only needed if HardDrop() sets a continuous "fast fall" state.
-            // If HardDrop() teleports the piece instantly, this is harmless.
-            if (player != null) player.StopDrop();
-        }
-        else if (!moved && Vector2.Distance(startPos, e.position) <= tapMaxMove)
+        if (!dropping && !moved && Vector2.Distance(startPos, e.position) <= tapMaxMove)
         {
             onRotate.Invoke();
         }
