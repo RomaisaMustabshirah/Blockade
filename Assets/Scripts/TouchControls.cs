@@ -55,13 +55,15 @@ public class TouchControls : MonoBehaviour, IPointerDownHandler, IDragHandler, I
         {
             dropping = true;
             moved = true;
-            onDropStart.Invoke();
+            if (player != null)
+    player.StartDrop();
         }
     }
 
     public void OnPointerUp(PointerEventData e)
     {
-        if (dropping) onDropEnd.Invoke();
+        if (dropping && player != null)
+    player.StopDrop();
         else if (!moved && Vector2.Distance(startPos, e.position) <= tapMaxMove)
             onRotate.Invoke();
         dropping = false;

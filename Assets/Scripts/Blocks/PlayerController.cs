@@ -2,12 +2,14 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+   
     public float fallInterval = 0.8f;
     public float softDropMultiplier = 4f;
     public float horizontalMoveSpeed = 12f; // units per second, independent of falling
 
     private float fallTimer = 0f;
     private float currentFallInterval;
+    private bool touchDropping = false;
 
     private GridManager gridManager;
     private PieceSpawner pieceSpawner;
@@ -54,7 +56,9 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             TryMove(1, 0);
 
-        bool softDropping = Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S);
+        bool softDropping = Input.GetKey(KeyCode.DownArrow)
+                 || Input.GetKey(KeyCode.S)
+                 || touchDropping;
 
         currentFallInterval = softDropping ? fallInterval / softDropMultiplier : fallInterval;
     }
@@ -176,11 +180,11 @@ public void RotatePiece()
 
 public void StartDrop()
 {
-    currentFallInterval = fallInterval / softDropMultiplier;
+    touchDropping = true;
 }
 
 public void StopDrop()
 {
-    currentFallInterval = fallInterval;
+    touchDropping = false;
 }
 }
