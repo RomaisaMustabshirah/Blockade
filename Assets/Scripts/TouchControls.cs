@@ -56,7 +56,7 @@ public class TouchControls : MonoBehaviour, IPointerDownHandler, IDragHandler, I
             dropping = true;
             moved = true;
             if (player != null)
-    player.StartDrop();
+    player.HardDrop();
         }
     }
 

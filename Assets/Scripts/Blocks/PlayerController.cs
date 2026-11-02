@@ -187,4 +187,19 @@ public void StopDrop()
 {
     touchDropping = false;
 }
+public void HardDrop()
+{
+    while (CanMove(0, -1))
+    {
+        gridPosY--;
+    }
+
+    transform.position = new Vector3(
+        gridPosX * gridManager.cellSize,
+        gridPosY * gridManager.cellSize,
+        0
+    );
+
+    LockPiece();
+}
 }
