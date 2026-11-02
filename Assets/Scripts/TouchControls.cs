@@ -56,25 +56,19 @@ public class TouchControls : MonoBehaviour, IPointerDownHandler, IDragHandler, I
 
     float downwardDistance = startPos.y - e.position.y;
 
-    if (!dropping && downwardDistance >= dropDistance)
+if (!dropping && downwardDistance > 80f)
 {
     dropping = true;
     moved = true;
 
-    Debug.Log("DOWNWARD SWIPE DETECTED");
+    Debug.Log("WEBGL HARD DROP TRIGGERED");
 
     if (player != null)
     {
-        Debug.Log("PLAYER FOUND");
         player.HardDrop();
     }
-    else
-    {
-        Debug.Log("PLAYER IS NULL");
-    }
 }
 }
-
     public void OnPointerUp(PointerEventData e)
 {
     if (dropping && player != null)
