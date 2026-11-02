@@ -22,8 +22,14 @@ public class PieceSpawner : MonoBehaviour
 
         CreateShape(newPiece, shape);
         ApplyRandomColors(newPiece);
-    }
+        TouchControls touchControls = FindFirstObjectByType<TouchControls>();
 
+if (touchControls != null)
+{
+    touchControls.player = newPiece.GetComponent<PlayerController>();
+}
+    }
+    
     void CreateShape(GameObject piece, int shape)
 {
     Transform b0 = piece.transform.GetChild(0);

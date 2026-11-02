@@ -158,4 +158,29 @@ public class PlayerController : MonoBehaviour
 
 pieceSpawner.SpawnPiece();
     }
+public void MoveLeft()
+{
+    TryMove(-1, 0);
+}
+
+public void MoveRight()
+{
+    TryMove(1, 0);
+}
+
+public void RotatePiece()
+{
+    // We'll implement rotation here once we confirm
+    // how your pieces are structured.
+}
+
+public void StartDrop()
+{
+    currentFallInterval = fallInterval / softDropMultiplier;
+}
+
+public void StopDrop()
+{
+    currentFallInterval = fallInterval;
+}
 }
