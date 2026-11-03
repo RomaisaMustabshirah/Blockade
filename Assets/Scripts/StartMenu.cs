@@ -53,6 +53,8 @@ public class StartMenu : MonoBehaviour
             musicButton.onClick.AddListener(ToggleMusic);
 
         ApplyMusic();
+        if (musicOn && musicSource != null && !musicSource.isPlaying)
+    musicSource.Play();
 
         if (hasStarted)
         {
@@ -128,4 +130,5 @@ public class StartMenu : MonoBehaviour
         if (musicIcon != null)
             musicIcon.sprite = musicOn ? musicOnSprite : musicOffSprite;
     }
+    
 }
