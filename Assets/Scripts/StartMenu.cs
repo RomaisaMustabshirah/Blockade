@@ -1,6 +1,9 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+using UnityEngine.InputSystem;
+#endif
 
 public class StartMenu : MonoBehaviour
 {
@@ -37,6 +40,7 @@ public class StartMenu : MonoBehaviour
 
     RectTransform titleRect;
     Vector2 titleStartPos;
+    bool musicUnlocked;
 
     // Resets the statics when entering Play mode in the Editor
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -51,6 +55,7 @@ public class StartMenu : MonoBehaviour
         if (musicButton != null)
             musicButton.onClick.AddListener(ToggleMusic);
 
+        // The script controls when music starts, not the AudioSource
         if (musicSource != null)
             musicSource.playOnAwake = false;
 
@@ -64,7 +69,7 @@ public class StartMenu : MonoBehaviour
             return;
         }
 
-        // First launch: wait for the Play tap before starting music
+        // First launch: music starts on the first tap anywhere (see Update)
         Time.timeScale = 0f;
         menuPanel.SetActive(true);
 
@@ -81,11 +86,26 @@ public class StartMenu : MonoBehaviour
 
     void Update()
     {
+        // Gentle floating title (unscaled time, because the game is paused)
         if (titleRect != null && menuPanel.activeSelf)
         {
             float offset = Mathf.Sin(Time.unscaledTime * floatSpeed) * floatHeight;
             titleRect.anchoredPosition = titleStartPos + new Vector2(0f, offset);
         }
+
+        // Start music on the first tap or click anywhere, even on the menu
+        if (!musicUnlocked && TapDetected())
+            StartMusic();
+    }
+
+    bool TapDetected()
+    {
+#if ENABLE_INPUT_SYSTEM && !ENABLE_LEGACY_INPUT_MANAGER
+        return (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+            || (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame);
+#else
+        return Input.GetMouseButtonDown(0) || Input.touchCount > 0;
+#endif
     }
 
     void ColorizeTitle()
@@ -107,7 +127,7 @@ public class StartMenu : MonoBehaviour
         menuPanel.SetActive(false);
         Time.timeScale = 1f;
 
-        StartMusic(); // first real tap: mobile browsers allow audio now
+        StartMusic(); // does nothing if the music is already playing
     }
 
     void ToggleMusic()
@@ -121,6 +141,9 @@ public class StartMenu : MonoBehaviour
     {
         if (musicSource == null || !musicOn) return;
 
+        musicUnlocked = true;
+
+        // Never start it twice, so the track can't overlap itself
         if (!musicSource.isPlaying)
             musicSource.Play();
     }
