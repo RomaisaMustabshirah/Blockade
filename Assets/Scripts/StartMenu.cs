@@ -41,6 +41,14 @@ public class StartMenu : MonoBehaviour
     RectTransform titleRect;
     Vector2 titleStartPos;
     bool musicUnlocked;
+    // Called by the Menu button on the game over screen
+public static void GoToMenu()
+{
+    hasStarted = false;   // so the menu shows again after the reload
+    Time.timeScale = 1f;  // the reload sets it back to 0 on its own
+    UnityEngine.SceneManagement.SceneManager.LoadScene(
+        UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+}
 
     // Resets the statics when entering Play mode in the Editor
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
