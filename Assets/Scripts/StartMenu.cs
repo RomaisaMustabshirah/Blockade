@@ -100,26 +100,27 @@ public class StartMenu : MonoBehaviour
     }
 
     void OnPlay()
-    {
-        hasStarted = true;
-        menuPanel.SetActive(false);
-        Time.timeScale = 1f;
+{
+    hasStarted = true;
+    menuPanel.SetActive(false);
+    Time.timeScale = 1f;
 
-        // The Play tap counts as a user gesture, which browsers require before audio can start
-        if (musicOn && musicSource != null && !musicSource.isPlaying)
-            musicSource.Play();
+    if (musicOn && musicSource != null && !musicSource.isPlaying)
+    {
+        musicSource.Play();
     }
+}
 
     void ToggleMusic()
+{
+    musicOn = !musicOn;
+    ApplyMusic();
+
+    if (musicOn && musicSource != null && !musicSource.isPlaying)
     {
-        musicOn = !musicOn;
-        ApplyMusic();
-
-        // If the player turns music back on and it never started, start it now (also a user gesture)
-        if (musicOn && hasStarted && musicSource != null && !musicSource.isPlaying)
-            musicSource.Play();
+        musicSource.Play();
     }
-
+}
     void ApplyMusic()
     {
         if (musicSource != null)
