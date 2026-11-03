@@ -48,20 +48,23 @@ public class StartMenu : MonoBehaviour
 
     void Awake()
     {
-        // Music button works at all times (menu and gameplay)
         if (musicButton != null)
             musicButton.onClick.AddListener(ToggleMusic);
 
+        if (musicSource != null)
+            musicSource.playOnAwake = false;
+
         ApplyMusic();
-        if (musicOn && musicSource != null && !musicSource.isPlaying)
-    musicSource.Play();
 
         if (hasStarted)
         {
+            // Scene reloaded (Try Again): the player already tapped, audio is allowed
             menuPanel.SetActive(false);
+            StartMusic();
             return;
         }
 
+        // First launch: wait for the Play tap before starting music
         Time.timeScale = 0f;
         menuPanel.SetActive(true);
 
@@ -78,7 +81,6 @@ public class StartMenu : MonoBehaviour
 
     void Update()
     {
-        // Gentle floating title (unscaled time, because the game is paused)
         if (titleRect != null && menuPanel.activeSelf)
         {
             float offset = Mathf.Sin(Time.unscaledTime * floatSpeed) * floatHeight;
@@ -100,27 +102,29 @@ public class StartMenu : MonoBehaviour
     }
 
     void OnPlay()
-{
-    hasStarted = true;
-    menuPanel.SetActive(false);
-    Time.timeScale = 1f;
-
-    if (musicOn && musicSource != null && !musicSource.isPlaying)
     {
-        musicSource.Play();
+        hasStarted = true;
+        menuPanel.SetActive(false);
+        Time.timeScale = 1f;
+
+        StartMusic(); // first real tap: mobile browsers allow audio now
     }
-}
 
     void ToggleMusic()
-{
-    musicOn = !musicOn;
-    ApplyMusic();
-
-    if (musicOn && musicSource != null && !musicSource.isPlaying)
     {
-        musicSource.Play();
+        musicOn = !musicOn;
+        ApplyMusic();
+        StartMusic();
     }
-}
+
+    void StartMusic()
+    {
+        if (musicSource == null || !musicOn) return;
+
+        if (!musicSource.isPlaying)
+            musicSource.Play();
+    }
+
     void ApplyMusic()
     {
         if (musicSource != null)
@@ -131,5 +135,4 @@ public class StartMenu : MonoBehaviour
         if (musicIcon != null)
             musicIcon.sprite = musicOn ? musicOnSprite : musicOffSprite;
     }
-    
 }
