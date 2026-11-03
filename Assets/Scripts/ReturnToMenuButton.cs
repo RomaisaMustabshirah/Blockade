@@ -1,16 +1,11 @@
 using UnityEngine;
+using UnityEngine.UI;
 
-public class ReturnMenu : MonoBehaviour
+[RequireComponent(typeof(Button))]
+public class ReturnToMenuButton : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        GetComponent<Button>().onClick.AddListener(StartMenu.GoToMenu);
     }
 }
