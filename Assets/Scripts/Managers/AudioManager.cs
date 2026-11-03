@@ -10,6 +10,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("Music")]
     public AudioClip backgroundMusic;
+    private bool musicOn = true;
 
     [Header("Sound Effects")]
     public AudioClip blockClear;
@@ -34,6 +35,11 @@ public class AudioManager : MonoBehaviour
         musicSource.loop = true;
         musicSource.Play();
     }
+    public void ToggleMusic()
+{
+    musicOn = !musicOn;
+    musicSource.mute = !musicOn;
+}
 
     public void PlayClear() => sfxSource.PlayOneShot(blockClear);
     public void PlayDrop() => sfxSource.PlayOneShot(blockDrop);
